@@ -38,3 +38,19 @@ cal.mr = function(subjects,p.mr,per.m.in.ltfus,n.followyr,avg.ltfur){
   
   return(mr)
 }
+cal.m.ci = function(i,res,mrs){
+  m.mrs = mean(mrs)
+  sd.mrs = sd(mrs)
+  print(paste("mean:",m.mrs))
+  
+  uplm.ci = round(m.mrs+1.96*sd.mrs,4) # uplimit of ci
+  downlm.ci = round(m.mrs-1.96*sd.mrs,4) # downlimit of ci
+  downlm.ci = ifelse(downlm.ci<0,0,downlm.ci) # if downlimit is negative then replace it with 0 
+  print(paste("CI: [",downlm.ci,",",uplm.ci,"]"))
+  
+  res$m.mrs[i] = m.mrs
+  res$downlm.ci[i] = downlm.ci
+  res$uplm.ci[i] = uplm.ci
+  
+  return(res)
+}
