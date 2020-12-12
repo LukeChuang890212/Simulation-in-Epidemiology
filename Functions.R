@@ -56,9 +56,15 @@ cal.m.ci = function(i,res,mrs){
   return(res)
 }
 
+cal.bias = function(i,p.mr,res,mrs){
+  bias = sqrt(sum((mrs-p.mr)^2)/length(mrs))
+  res$bias[i] = bias
+}
+
 plot.emr.ss = function(p.mr,per.m.in.ltfus,res){
   bp = barplot(height=res$m.mrs,names.arg=N,xlab="Sample Size",ylab="Estimated Mortality Rate",ylim=c(0.0,max(res$uplm.ci)),main=paste("Level of Relatedness =",per.m.in.ltfus))
   lines(bp,res$downlm.ci,lty=2)
   lines(bp,res$uplm.ci,lty=2)
   abline(h=p.mr,lwd=2)
 }
+

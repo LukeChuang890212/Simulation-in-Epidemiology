@@ -16,7 +16,7 @@ n.N = length(N) # no. of differnt sample sizes
 
 par(mfrow=c(2,3))
 for(per.m.in.ltfus in pers.m.in.ltfus){
-  res = list(m.mrs=rep(0,n.N),downlm.ci=rep(0,n.N),uplm.ci=rep(0,n.N))
+  res = list(m.mrs=rep(0,n.N),downlm.ci=rep(0,n.N),uplm.ci=rep(0,n.N),bias=rep(0,n.N))
   for(i in 1:n.N){ # i means index of sample size 
     n=N[i] # sample size
       
@@ -28,12 +28,11 @@ for(per.m.in.ltfus in pers.m.in.ltfus){
     }
   
     res = cal.m.ci(i,res,mrs) # calculate the mean and ci for our estimation of mortality rate and store them into res list at index i
+    res = cal.bias(i,p.mr,res,mrs) # calculate the bias for our estimation of mortality rate and store them into res list at index i
   }
   print(res)
   
-  bias = 
-  
-  #plot.f(p.mr,per.m.in.ltfus,res)
+  plot.f(p.mr,per.m.in.ltfus,res)
 }
 
 
