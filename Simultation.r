@@ -26,10 +26,11 @@ for(i in 1:n.N){ # i means index of sample size
   res = cal.m.ci(i,res,mrs) # calculate the mean and ci for our estimation of mortality rate and store them into res list at index i
 }
 print(res)
-barplot(height=res$m.mrs,names.arg=N,xlab="Sample Size",ylab="Estimated Mortality Rate",ylim=c(0.0,0.04))
-lines(res$downlm.ci,lty=2)
-lines(res$uplm.ci,lty=2)
-lines(0.020,lty=1)
+bar = barplot(height=res$m.mrs,names.arg=N,xlab="Sample Size",ylab="Estimated Mortality Rate",ylim=c(0.0,0.04))
+print(bar.axis)
+lines(x=1:n.N,y=res$downlm.ci,lty=2)
+lines(x=1:n.N,y=res$uplm.ci,lty=2)
+abline(h=0.020,lwd=2)
 
 
 
