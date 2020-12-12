@@ -1,36 +1,40 @@
 setwd("C:/Users/莊明儒/Desktop/Epidemiology")
 source("Functions.r")
 
-N = 50:80 #no. of samples 
+N = 50:200 #no. of samples 
 
 p.mr = 0.02  #mortality rate in pupulation 
-per.m.in.ltfus = 0.0 #percentage of mortality in loss-to-follow-up subjects (relatedness of loss-to-follow-up to mortality)
+pers.m.in.ltfus = seq(0.0,1.0,0.2) #percentages of mortality in loss-to-follow-up subjects (relatedness of loss-to-follow-up to mortality)
+plot.f = plot.emr.ss
 
 n.sim = 1000 #no. of simulation (fixed)
 ltfur = 0.5 #rate of loss to follow up (fixed)
 n.followyr = 10 #no. of years to follow up (fixed)
+
 avg.ltfur = 1-(1-ltfur)^(1/n.followyr)
-
 n.N = length(N) # no. of differnt sample sizes
-res = list(m.mrs=rep(0,n.N),downlm.ci=rep(0,n.N),uplm.ci=rep(0,n.N))
-for(i in 1:n.N){ # i means index of sample size 
-  n=N[i]
-    
-  mrs = rep(0,n.sim)
-  # n.total.ltfuss = rep(0,n.sim)
-  for(sim in 1:n.sim){
-    subjects = sample(n)
-    mrs[sim] = cal.mr(subjects,p.mr,per.m.in.ltfus,n.followyr,avg.ltfur) 
-  }
 
-  res = cal.m.ci(i,res,mrs) # calculate the mean and ci for our estimation of mortality rate and store them into res list at index i
+par(mfrow=c(2,3))
+for(per.m.in.ltfus in pers.m.in.ltfus){
+  res = list(m.mrs=rep(0,n.N),downlm.ci=rep(0,n.N),uplm.ci=rep(0,n.N))
+  for(i in 1:n.N){ # i means index of sample size 
+    n=N[i] # sample size
+      
+    mrs = rep(0,n.sim)
+    # n.total.ltfuss = rep(0,n.sim)
+    for(sim in 1:n.sim){ # sim means the (sim)th time of simulation
+      subjects = sample(n)
+      mrs[sim] = cal.mr(subjects,p.mr,per.m.in.ltfus,n.followyr,avg.ltfur) 
+    }
+  
+    res = cal.m.ci(i,res,mrs) # calculate the mean and ci for our estimation of mortality rate and store them into res list at index i
+  }
+  print(res)
+  
+  bias = 
+  
+  #plot.f(p.mr,per.m.in.ltfus,res)
 }
-print(res)
-bar = barplot(height=res$m.mrs,names.arg=N,xlab="Sample Size",ylab="Estimated Mortality Rate",ylim=c(0.0,0.04))
-print(bar.axis)
-lines(x=1:n.N,y=res$downlm.ci,lty=2)
-lines(x=1:n.N,y=res$uplm.ci,lty=2)
-abline(h=0.020,lwd=2)
 
 
 
