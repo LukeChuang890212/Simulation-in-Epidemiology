@@ -10,13 +10,14 @@ cal.mr = function(subjects,p.mr,per.m.in.ltfus,n.followyr,avg.ltfur){
     # 
     # print(paste("n.ltfus:",n.ltfus))
     # print(paste("n.mos:",n.mos))
-    
-    ltfus = sample(subjects,n.ltfus) # loss to follow-up subjects
+    if(n.ltfus<=length(subjects)){
+      ltfus = sample(subjects,n.ltfus) # loss to follow-up subjects
+    }  
     
     subjects = subjects[! subjects %in% ltfus] # remain only subjects who is not ltfus (1st time to del subjects)
     
     nominal.n.mos = n.mos-round(n.ltfus*per.m.in.ltfus) # n.ltfus*per.m.in.ltfus = no. of subjects who is ltfus due to mortality)
-    if(nominal.n.mos >0){ # if there is any extra dropout due to mortality
+    if(nominal.n.mos>0 && nominal.n.mos<=length(subjects)){ # if there is any extra dropout due to mortality and the no. of extra mortality cases is still smaller than th remain subjects
       nominal.mos = sample(subjects,nominal.n.mos) # nomial no. of mos 
       
       subjects = subjects[! subjects %in% nominal.mos] # remain only subjects who is not nominal.mos (2nd time to del subjects)
@@ -57,7 +58,8 @@ cal.m.ci = function(i,res,mrs){
 }
 
 cal.bias = function(i,p.mr,res,mrs){
-  bias = sqrt(sum((mrs-p.mr)^2)/length(mrs))
+  bias = sum(abs(mrs-p.mr)/p.mr)/length(mrs)
+  # bias = sqrt(sum((mrs-p.mr)^2)/length(mrs))
   res$bias[i] = bias
   
   return(res)
