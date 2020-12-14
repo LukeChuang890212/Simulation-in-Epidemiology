@@ -5,8 +5,8 @@ source("Functions.r")
 
 N = 50:200 #no. of samples 
 
-p.mrs = c(0.02,0.1,0.4)  #mortality rate in pupulation c(0.02,0.1,0.4) 
-pers.m.in.ltfus = seq(0.04,0.1,0.02) #percentages of mortality in loss-to-follow-up subjects (relatedness of loss-to-follow-up to mortality)
+p.mrs = c(0.01)  #mortality rate in pupulation c(0.02,0.1,0.4) 
+pers.m.in.ltfus = seq(0.04,0.1,0.02) #percentages of mortality that is mistaken for loss of follow-up (association of loss-to-follow-up with mortality)
 
 n.sim = 1000 #no. of simulation (fixed)
 ltfurs = seq(0.1,0.5,0.1) #rate of loss to follow up (fixed)
@@ -35,7 +35,10 @@ for(p.mr in p.mrs){
           subjects = sample(n)
           mrs[sim] = cal.mr(subjects,p.mr,per.m.in.ltfus,n.followyr,avg.ltfur) 
         }
-      
+        
+        #hist(mrs,breaks="Scott")
+        #Sys.sleep(60)
+        
         res = cal.m.ci(i,res,mrs) # calculate the mean and ci for our estimation of mortality rate and store them into res list at index i
         res = cal.bias(i,p.mr,res,mrs) # calculate the bias for our estimation of mortality rate and store them into res list at index i
       }
@@ -53,7 +56,7 @@ for(p.mr in p.mrs){
     par(mfrow=c(2,2))
     for(i in 1:length(pers.m.in.ltfus)){ # i means index of per.m.in.ltfus
       per.m.in.ltfus = pers.m.in.ltfus[i]
-      plot(x=N,y=reses[[i]]$bias,type='l',xlab="Sample Size",ylab="Percentage of Bias",main=paste("Level of Association =",per.m.in.ltfus)) # plot bias~ss
+      plot(x=N,y=reses[[i]]$bias,type='l',xlab="Sample Size",ylab="Bias",main=paste("Level of Association =",per.m.in.ltfus)) # plot bias~ss
     }
     #title(paste("Proportion of Loss of Follow-up =",ltfur),outer=T)
     

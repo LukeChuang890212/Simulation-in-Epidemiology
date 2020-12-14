@@ -3,21 +3,25 @@ cal.mr = function(subjects,p.mr,per.m.in.ltfus,n.followyr,avg.ltfur){
   # n.total.ltfus = 0
   ptar = 0 #population time at risk
   for(yr in 1:n.followyr){
+    # print(paste("start length(subjects):",length(subjects)))
     n.mos = rpois(n=1,lambda=length(subjects)*p.mr) # no. of mortality-occurence subjects
     n.ltfus = rbinom(n=1,size=length(subjects)+n.total.mos,prob=avg.ltfur) # no. of ltfus
     # n.total.ltfus = n.total.ltfus+n.ltfus
     # n.total.ltfuss[sim] = n.total.ltfus
-    # 
+    
     # print(paste("n.ltfus:",n.ltfus))
     # print(paste("n.mos:",n.mos))
-    if(n.ltfus<=length(subjects)){
+    if(n.ltfus<=length(subjects)){ # if no. of loss of follow-up is still smaller than th remain subjects
       ltfus = sample(subjects,n.ltfus) # loss to follow-up subjects
     }  
     
     subjects = subjects[! subjects %in% ltfus] # remain only subjects who is not ltfus (1st time to del subjects)
     
-    nominal.n.mos = n.mos-round(n.ltfus*per.m.in.ltfus) # n.ltfus*per.m.in.ltfus = no. of subjects who is ltfus due to mortality)
-    if(nominal.n.mos>0 && nominal.n.mos<=length(subjects)){ # if there is any extra dropout due to mortality and the no. of extra mortality cases is still smaller than th remain subjects
+    
+    nominal.n.mos = round(n.mos-n.mos*per.m.in.ltfus) # n.mos*per.m.in.ltfus = no. of subjects who is ltfus due to mortality) # where rounding error might happen
+    # print(paste("nominal.n.mos:",nominal.n.mos))
+    
+    if(nominal.n.mos<=length(subjects)){ # if no. of extra mortality cases is still smaller than th remain subjects
       nominal.mos = sample(subjects,nominal.n.mos) # nomial no. of mos 
       
       subjects = subjects[! subjects %in% nominal.mos] # remain only subjects who is not nominal.mos (2nd time to del subjects)
@@ -29,7 +33,7 @@ cal.mr = function(subjects,p.mr,per.m.in.ltfus,n.followyr,avg.ltfur){
   }
   ptar = ptar+length(subjects)*n.followyr # add the contribution of person-year from each remain subjects to ptar
   
-  # print(paste("length(subjects):",length(subjects)))
+  # print(paste("end length(subjects):",length(subjects)))
   # print(paste("ptar:",ptar))
   # print(paste("n.total.mos:",n.total.mos))
   # print(paste("n.total.ltfus:",n.total.ltfus))
@@ -58,7 +62,8 @@ cal.m.ci = function(i,res,mrs){
 }
 
 cal.bias = function(i,p.mr,res,mrs){
-  bias = sum(abs(mrs-p.mr)/p.mr)/length(mrs)
+  #bias = sum(abs(mrs-p.mr)/p.mr)/length(mrs)
+  bias = sum(mrs-p.mr)/length(mrs)
   # bias = sqrt(sum((mrs-p.mr)^2)/length(mrs))
   res$bias[i] = bias
   
